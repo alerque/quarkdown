@@ -27,10 +27,11 @@ class NodeNpmHelper(
 
     private fun linkModule(module: NodeModule) {
         if (!npm.isInstalled(module)) {
-            Log.info("Module '${module.name}' is not installed. Installing...")
-            npm.install(module)
+            throw IllegalStateException("Module '${module.name}' is not installed in system path. Fix system package dependencies.'")
+            // Log.info("Module '${module.name}' is not installed. Installing...")
+            // npm.install(module)
         }
-        npm.link(node, module)
+        // npm.link(node, module)
         linkedModules += module
     }
 
