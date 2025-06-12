@@ -1,0 +1,29 @@
+name: Run Flake
+
+on: [ push, pull_request ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  nix-flake:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@v17
+      - name: Cache Nix dependencies
+        uses: DeterminateSystems/flakehub-cache-action@v1
+      - name: Check flake
+        run: nix flake check --impure
+      - name: Build flake
+        run: nix build
+      - name: Test run in shell
+        run: nix shell -c quarkdown --version
+      - name: Test run as flake
+        run: nix run . -- --version
